@@ -1,16 +1,23 @@
-# ...existing code...
-
 init python:
     import random
-
+    
     def roll_d6():
         return random.randint(1, 6)
+
+    # list every character base name you use in "show" statements
+    _all_characters = ["luna", "kaique", "mila", "theo", "alice", "leonardo", "diretora"]
+    def hide_all_characters():
+        for c in _all_characters:
+            try:
+                renpy.hide(c)
+            except Exception:
+                pass
 
 define l = Character("Luna", color="#6AAFE6")
 define k = Character("Kaique", color="#E2956A")
 define m = Character("Mila", color="#A36AE6")
 define t = Character("Theo", color="#6AE699")
-define alice = Character("Alice", color="#E66A98")
+define a = Character("Alice", color="#E66A98")
 define leonardo = Character("Leonardo", color="#888888")
 define diretora = Character("Diretora", color="#4444AA")
 
@@ -21,19 +28,23 @@ default leonardo_in_crisis = False
 
 label start:
     scene bg school_hall with fade
-    show luna neutral
-    show kaique smile
-    show mila neutral
-    show theo grin
 
     "Ato 1 — O Começo da Semana"
+    show luna neutral at left
     l "É meu primeiro dia aqui... tudo parece grande demais."
+    $ hide_all_characters()
+    show kaique smile at left
     k "Calma, Luna. Eu te apresento pro pessoal depois do recreio."
+    $ hide_all_characters()
+    show mila excited at left
     m "Tem cartazes do clube de ciências no mural. Depois eu mostro como achar informações sobre projetos."
-    t "Se alguém derrubar o lanche eu improviso um avião de papel pra distrair a galera."
-
+    $ hide_all_characters()
+    show theo grin at left
+    t "Bem-vinda à selva escolar. Se alguém te chatear por aqui, eu faço uma piada e a situação some. Pode contar comigo."
+    $ hide_all_characters()
     "No corredor, Alice recebe bilhetes e risadinhas de alguns colegas."
-    alice "Não... só parem com isso."
+    show luna sad at left
+    a "Por favor... só parem com isso..."
 
     # Escolha: Intervir ou Ignorar
     menu:
@@ -42,18 +53,29 @@ label start:
             $ r = roll_d6()
             if r >= 4:
                 $ trust_alice = True
+                $ hide_all_characters()
+                show kaique shouting at left 
                 k "Ei, chega! Isso não é brincadeira."
                 "Kaique se coloca à frente com voz firme; sua influência acalma os agressores."
+                $ hide_all_characters()
+                show luna thoughtful at left
                 l "Notei que os bilhetes vêm sempre da mesma turma — eles usam o mesmo tipo de caneta."
                 "Luna aponta o detalhe; observadora, ela ajuda a explicar a situação."
+                $ hide_all_characters()
+                show mila determined at left
                 m "Vou anotar os nomes e procurar posts antigos nas redes da escola."
-                t "Eu faço uns memes para desarmar a situação... no bom sentido."
+                show theo confident at left
+                t "Não se preocupa, a gente tá com você — e eu prometo umas piadas ruins pro resto da semana."
                 "Alice parece aliviada e confia mais no grupo."
             else:
                 $ targeted_by_aggressors = True
-                k "Talvez..."
+                $ hide_all_characters()
+                show kaique hesitant at left
+                k "E se..."
                 "Kaique hesita; tentar intervir falha e os agressores marcam o grupo como alvo."
-                l "Estão me olhando estranho. Vou ficar na minha."
+                show luna sad at left
+                l "Estão me olhando estranho... Vou ficar na minha..."
+                show theo nervous at left
                 t "Ei, rindo para não chorar..."
         "Ignorar — evitar envolvimento":
             $ targeted_by_aggressors = True
@@ -65,7 +87,7 @@ label start:
     scene bg classroom_day with dissolve
     "No dia seguinte, Alice não aparece."
     if trust_alice:
-        alice "Desculpem... eu precisava fugir por um dia, mas queria avisar vocês."
+        a "Desculpem... eu precisava fugir por um dia, mas queria avisar vocês."
     else:
         "Circulam boatos de que ela 'fugiu' por pressão."
 
@@ -77,7 +99,7 @@ label start:
         "Quem lidera a investigação?"
         "Mila pesquisa (teste de Pesquisa)":
             $ r = roll_d6()
-            if r >= 4:
+            if r >= 2:
                 $ discovered_profiles = True
                 m "Encontrei contas falsas criadas nos últimos meses. Elas postam insultos contra Alice e outros alunos."
                 "Mila acha rastros digitais rapidamente — sua empolgação vira vantagem prática."
@@ -105,17 +127,18 @@ label start:
 
     "Ato 3 — As Sombras no Pátio"
     scene bg school_night with fade
+    show leonardo awkward at center
     "No pátio vazio, Leonardo aparece. Ele confessará?"
     leonardo "Eu criei os perfis... queria ensinar uma lição aos valentões."
     "Ele parece extremamente magoado e perdido."
 
     # Confronto emocional — uso de habilidades para convencer
-    "Cada personagem pode tentar uma abordagem. Escolham quem fala com Leonardo."
+    "Cada personagem pode tentar uma abordagem. Escolha quem fala com Leonardo."
     menu:
         "Quem tenta convencer Leonardo?"
         "Luna — Observadora (empatia calma)":
             $ r = roll_d6()
-            if r >= 4:
+            if r >= 3:
                 $ leonardo_in_crisis = False
                 l "Você não precisa carregar isso sozinho. Vi detalhes que mostram que você sofreu também."
                 "Luna se aproxima com cuidado; sua tranquilidade faz Leonardo hesitar e, então, ceder."
@@ -162,5 +185,3 @@ label start:
     "Última cena: um novo estudante entra pela porta... vocês sorriem, prontos pra agir."
 
     return
-
-# ...existing code...
