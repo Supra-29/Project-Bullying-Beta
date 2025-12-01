@@ -5,7 +5,7 @@ init python:
         return random.randint(1, 6)
 
     # list every character base name you use in "show" statements
-    _all_characters = ["luna", "kaique", "mila", "theo", "alice", "leonardo", "diretora"]
+    _all_characters = ["luna", "kaique", "mila", "theo", "leonardo", "diretora"]
     def hide_all_characters():
         for c in _all_characters:
             try:
@@ -13,15 +13,14 @@ init python:
             except Exception:
                 pass
 
-define l = Character("Luna", color="#6AAFE6")
+define l = Character("Luna", color="#A36AE6")
 define k = Character("Kaique", color="#E2956A")
-define m = Character("Mila", color="#A36AE6")
+define m = Character("Mila", color="#6A9CE2")
 define t = Character("Theo", color="#6AE699")
-define a = Character("Alice", color="#E66A98")
 define leonardo = Character("Leonardo", color="#888888")
 define diretora = Character("Diretora", color="#4444AA")
 
-default trust_alice = False
+default trust_luna = False
 default targeted_by_aggressors = False
 default discovered_profiles = False
 default leonardo_in_crisis = False
@@ -42,17 +41,17 @@ label start:
     show theo grin at left
     t "Bem-vinda à selva escolar. Se alguém te chatear por aqui, eu faço uma piada e a situação some. Pode contar comigo."
     $ hide_all_characters()
-    "No corredor, Alice recebe bilhetes e risadinhas de alguns colegas."
-    show luna sad at left
-    a "Por favor... só parem com isso..."
+    "No corredor, Luna recebe bilhetes e risadinhas de alguns colegas."
+    show luna frustrated at left
+    l "Por favor... só parem com isso..."
 
     # Escolha: Intervir ou Ignorar
     menu:
         "O que vocês fazem?"
-        "Intervir — tentar ajudar Alice":
+        "Intervir — tentar ajudar Luna":
             $ r = roll_d6()
             if r >= 4:
-                $ trust_alice = True
+                $ trust_luna = True
                 $ hide_all_characters()
                 show kaique shouting at left 
                 k "Ei, chega! Isso não é brincadeira."
@@ -64,30 +63,34 @@ label start:
                 $ hide_all_characters()
                 show mila determined at left
                 m "Vou anotar os nomes e procurar posts antigos nas redes da escola."
+                $ hide_all_characters()
                 show theo confident at left
                 t "Não se preocupa, a gente tá com você — e eu prometo umas piadas ruins pro resto da semana."
-                "Alice parece aliviada e confia mais no grupo."
+                $ hide_all_characters()
+                "Luna parece aliviada e confia mais no grupo."
             else:
                 $ targeted_by_aggressors = True
                 $ hide_all_characters()
-                show kaique hesitant at left
+                show kaique hesitant at left 
                 k "E se..."
                 "Kaique hesita; tentar intervir falha e os agressores marcam o grupo como alvo."
                 show luna sad at left
                 l "Estão me olhando estranho... Vou ficar na minha..."
+                $ hide_all_characters()
                 show theo nervous at left
                 t "Ei, rindo para não chorar..."
         "Ignorar — evitar envolvimento":
             $ targeted_by_aggressors = True
-            "Vocês recuam. Os agressores continuam; Alice fica mais isolada."
+            "Vocês recuam. Os agressores continuam; Luna fica mais isolada."
             m "Isso não parece certo... mas se nos metermos podemos virar alvo também."
             t "Pelo menos o lanche está intacto."
 
     "Ato 2 — O Desaparecimento"
     scene bg classroom_day with dissolve
-    "No dia seguinte, Alice não aparece."
-    if trust_alice:
-        a "Desculpem... eu precisava fugir por um dia, mas queria avisar vocês."
+    "No dia seguinte, Luna não aparece."
+    if trust_luna:
+        show luna sad at left 
+        l "Desculpem... eu precisava fugir por um dia, mas queria avisar vocês."
     else:
         "Circulam boatos de que ela 'fugiu' por pressão."
 
@@ -95,28 +98,34 @@ label start:
     "\"A escola tem segredos. O verdadeiro monstro está no pátio.\""
 
     "Mila faz checagens nas redes internas da escola."
+    $ hide_all_characters()
     menu:
         "Quem lidera a investigação?"
         "Mila pesquisa (teste de Pesquisa)":
             $ r = roll_d6()
             if r >= 2:
                 $ discovered_profiles = True
-                m "Encontrei contas falsas criadas nos últimos meses. Elas postam insultos contra Alice e outros alunos."
+                show mila excited at left
+                m "Encontrei contas falsas criadas nos últimos meses. Elas postam insultos contra Luna e outros alunos."
                 "Mila acha rastros digitais rapidamente — sua empolgação vira vantagem prática."
             else:
-                m "Há muitos perfis; preciso de mais tempo."
+                show mila frustrated at left
+                m "Há muitos perfis; preciso de mais tempo..."
         "Luna observa (teste de Observadora)":
             $ r = roll_d6()
             if r >= 4:
                 $ discovered_profiles = True
+                show luna thoughtful at left
                 l "Reparei num padrão: horários parecidos de postagem. Deve haver uma origem única."
                 "Luna liga detalhes que outros não viram."
             else:
+                show luna sad at left
                 l "Sinto que tem algo, mas não sei onde procurar."
         "Kaique tenta acalmar a turma (teste de Influência)":
             $ r = roll_d6()
             if r >= 4:
                 "Kaique consegue evitar brigas enquanto vocês investigam."
+                show kaique confident at left
                 k "Gente, vamos manter a calma e conversar antes de acusar alguém."
             else:
                 "Ele falha em acalmar; a tensão cresce."
@@ -126,9 +135,11 @@ label start:
         "Vocês decidem confrontar a área do pátio à noite."
 
     "Ato 3 — As Sombras no Pátio"
+    $ hide_all_characters()
     scene bg school_night with fade
-    show leonardo awkward at center
+    show leonardo neutral at center
     "No pátio vazio, Leonardo aparece. Ele confessará?"
+    show leonardo distressed at center
     leonardo "Eu criei os perfis... queria ensinar uma lição aos valentões."
     "Ele parece extremamente magoado e perdido."
 
@@ -174,6 +185,7 @@ label start:
 
     if leonardo_in_crisis:
         "A tentativa falha: Leonardo foge, assustado. Vocês precisam avisar a direção."
+        show principal neutral at left
         diretor_call "Vocês fizeram bem em alertar. Vamos cuidar disso."
     else:
         "Leonardo se arrepende e pede ajuda. O grupo convence-no a procurar apoio."
@@ -181,7 +193,7 @@ label start:
 
     "Epílogo"
     scene bg school_day with dissolve
-    "A direção lança um projeto anti-bullying liderado pelos alunos. Alice volta mais confiante."
-    "Última cena: um novo estudante entra pela porta... vocês sorriem, prontos pra agir."
+    "A direção lança um projeto anti-bullying liderado pelos alunos. Luna volta mais confiante."
+    "E de repente: um novo estudante entra pela porta... vocês sorriem, prontos pra agir."
 
     return
